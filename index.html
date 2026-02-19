@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calendário TJGO 2026 Virtual</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="modal-aviso" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card">
+            <p id="modal-mensagem"></p>
+            <button id="modal-ok" onclick="fecharModal()">OK</button>
+        </div>
+    </div>
+
+    <div id="cal-wrapper">
+
+        <div id="bg"></div>
+
+        <header>
+            <h1>Calendário Virtual TJGO 2026</h1>
+        </header>
+
+        <nav class="meses-container" id="mesesContainer">
+            <button class="mes" onclick="irParaMes(3)">Janeiro</button>
+            <button class="mes" onclick="irParaMes(4)">Fevereiro</button>
+            <button class="mes" onclick="irParaMes(5)">Março</button>
+            <button class="mes" onclick="irParaMes(6)">Abril</button>
+            <button class="mes" onclick="irParaMes(7)">Maio</button>
+            <button class="mes" onclick="irParaMes(8)">Junho</button>
+            <button class="mes" onclick="irParaMes(9)">Julho</button>
+            <button class="mes" onclick="irParaMes(10)">Agosto</button>
+            <button class="mes" onclick="irParaMes(11)">Setembro</button>
+            <button class="mes" onclick="irParaMes(12)">Outubro</button>
+            <button class="mes" onclick="irParaMes(13)">Novembro</button>
+            <button class="mes" onclick="irParaMes(14)">Dezembro</button>
+        </nav>
+
+        <main class="book-wrapper">
+            <img id="paginaImg" src="img/pagina1.png" alt="Página do calendário" draggable="false">
+
+            <button id="btnLateral-anterior" onclick="paginaAnterior()">&#8592;</button>
+            <div id="contadorLateral">
+                <span id="paginaAtualSpan2">1</span> / <span id="totalPaginasSpan2">14</span>
+            </div>
+            <button id="btnLateral-proximo" onclick="proximaPagina()">&#8594;</button>
+        </main>
+
+        <footer class="controles">
+            <button id="btnAnterior" onclick="paginaAnterior()">&#8592; Anterior</button>
+            <div class="contador">
+                Página <span id="paginaAtualSpan">1</span> de <span id="totalPaginasSpan">14</span>
+            </div>
+            <button id="btnProximo" onclick="proximaPagina()">Próximo &#8594;</button>
+        </footer>
+
+    </div>
+
+    <script src="Java.js"></script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #2b2b2b;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+}
+
+#bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('img/Fundo.jpg');
+    background-color: #2b2b2b;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ================================================
+   MODAL DE AVISO (card bloqueante)
+   ================================================ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay[aria-hidden="true"] {
+    display: none;
+}
+
+.modal-card {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 32px 28px 24px;
+    max-width: 320px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.modal-card p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-card button {
+    padding: 10px 40px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.modal-card button:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* ================================================
+   WRAPPER DO CALENDÁRIO
+   ================================================ */
+
+#cal-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.5s ease, width 0.5s ease, height 0.5s ease, top 0.5s ease, left 0.5s ease;
+}
+
+header, .meses-container, .book-wrapper, .controles {
+    position: relative;
+    z-index: 1;
+}
+
+/* ================================================
+   CABEÇALHO
+   ================================================ */
+
+header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 10px 16px 4px;
+}
+
+h1 {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: clamp(0.75rem, 2.2vw, 2rem);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.65) 50%,
+        rgba(255, 255, 255, 0.95) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.85)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65));
+}
+
+/* ================================================
+   MENU DE MESES
+   ================================================ */
+
+.meses-container {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    margin: 4px auto;
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    width: max-content;
+    max-width: 98%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    list-style: none;
+    justify-content: center;
+}
+
+.meses-container::-webkit-scrollbar {
+    display: none;
+}
+
+.mes {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    border-radius: 50px;
+    color: white;
+    font-size: clamp(0.65rem, 1.1vw, 0.9rem);
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.mes::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at var(--x, 50%) var(--y, 50%),
+        rgba(255, 255, 255, 0.4) 0%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.mes:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.mes:hover::before,
+.mes:active::before {
+    opacity: 1;
+}
+
+.mes.ativo {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+}
+
+/* ================================================
+   LIVRO (IMAGEM ÚNICA)
+   ================================================ */
+
+.book-wrapper {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 4px 8px;
+    position: relative;
+}
+
+#paginaImg {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    user-select: none;
+    -webkit-user-drag: none;
+    border-radius: 2px;
+    transition: opacity 0.25s ease;
+}
+
+/* Botões laterais e contador — ocultos por padrão (só portrait mobile) */
+#btnLateral-anterior,
+#btnLateral-proximo,
+#contadorLateral {
+    display: none;
+}
+
+@keyframes entrarDireita {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes entrarEsquerda {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes sairEsquerda {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-60px); }
+}
+@keyframes sairDireita {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(60px); }
+}
+
+#paginaImg.entrar-direita  { animation: entrarDireita  0.35s ease forwards; }
+#paginaImg.entrar-esquerda { animation: entrarEsquerda 0.35s ease forwards; }
+#paginaImg.sair-esquerda   { animation: sairEsquerda   0.3s  ease forwards; }
+#paginaImg.sair-direita    { animation: sairDireita    0.3s  ease forwards; }
+
+#btnAnterior:disabled,
+#btnProximo:disabled,
+#btnLateral-anterior:disabled,
+#btnLateral-proximo:disabled {
+    opacity: 0.25;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ================================================
+   PAINEL DE CONTROLE (desktop / landscape)
+   ================================================ */
+
+.controles {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 16px;
+    margin: 4px auto 10px;
+    width: max-content;
+    max-width: 98%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+}
+
+.controles button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 100px;
+    padding: 8px 18px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+    font-family: inherit;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.controles button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at var(--x, 50%) var(--y, 50%),
+        rgba(255, 255, 255, 0.4) 0%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.controles button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.controles button:hover::before,
+.controles button:active::before {
+    opacity: 1;
+}
+
+.contador {
+    font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+    color: rgba(255, 255, 255, 0.9);
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+/* ================================================
+   MOBILE & TABLET — LAYOUT IMERSIVO (ambas orientações)
+   ================================================ */
+
+@media screen and (max-width: 1023px) {
+
+    header {
+        padding: 3px 10px 1px;
+    }
+
+    h1 {
+        font-size: clamp(0.6rem, 2.5vw, 1rem);
+        letter-spacing: 2px;
+    }
+
+    .meses-container {
+        padding: 3px 10px;
+        margin: 2px auto;
+        gap: 3px;
+        max-width: 99%;
+    }
+
+    .mes {
+        padding: 3px 8px;
+        font-size: 0.65rem;
+    }
+
+    .book-wrapper {
+        padding: 0;
+        position: relative;
+    }
+
+    #paginaImg {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .controles {
+        display: none;
+    }
+
+    #btnLateral-anterior,
+    #btnLateral-proximo {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        translate: 0 -50%;
+        width: 42px;
+        height: 42px;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 50%;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #btnLateral-anterior {
+        left: var(--btn-lateral-left, 50px);
+    }
+
+    #btnLateral-proximo {
+        right: var(--btn-lateral-right, 50px);
+    }
+
+    #btnLateral-anterior:active,
+    #btnLateral-proximo:active {
+        background: rgba(255, 255, 255, 0.26);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    #contadorLateral {
+        display: flex;
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        translate: -50% 0;
+        background: rgba(0, 0, 0, 0.10);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 50px;
+        padding: 3px 13px;
+        font-size: 0.58rem;
+        color: rgba(255, 255, 255, 0.92);
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 10;
+        letter-spacing: 0.5px;
+        opacity: 0.65;
+    }
+}
+
+/* ================================================
+   PORTRAIT MOBILE/TABLET — ROTAÇÃO 90°
+   ================================================ */
+
+/* portrait rotation handled by JS */
